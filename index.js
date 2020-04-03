@@ -25,20 +25,14 @@ function displayQuestion() {
   }
 }
 
-function displayAnswerMessage(ansCorrect) {
+function displayAnswerMessage(isAnsCorrect) {
 
   bOnQuestion = false;
 
-  //display question text
-  $('.question-text').text(ANSWER_RESPONSE[ansCorrect ? 0 : 1]);
+  $('.question-text').text(ANSWER_RESPONSE[isAnsCorrect ? 0 : 1]);
 
-  //display question choices
   $('.question-choices').empty();
   $('.mainButton').text('Next Question');
-
-  let totalNumberOfChoices = STORE[currentQuestionNumber].answers.length;
-
-  $('.score').text(score);
 
 }
 
@@ -101,6 +95,7 @@ function mainButtonPressed() {
 
     if (isCorrectAnswer) {
       score++;
+      $('.score').text(score);
     }
     
     if ((currentQuestionNumber + 1) == totalNumberOfQuestions) {

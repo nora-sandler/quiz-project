@@ -1,7 +1,7 @@
 
 let score = 0;
 let currentQuestionNumber = 0;
-let bOnQuestion = false;
+let bOnQuestion = true;
 let totalNumberOfQuestions = STORE.length;
 
 
@@ -15,7 +15,6 @@ function displayQuestion() {
   $('.question-text').text(STORE[currentQuestionNumber].question);
 
   //display question choices
-  $('.question-choices').empty();
 
   let totalNumberOfChoices = STORE[currentQuestionNumber].answers.length;
 
@@ -23,6 +22,8 @@ function displayQuestion() {
     let buildEachChoiceHTML = `<input type='radio' class='option' name='capitals' value="${i}">${STORE[currentQuestionNumber].answers[i]}<br>`;
     $('.question-choices').append(buildEachChoiceHTML);
   }
+
+  $('.mainButton').text('Submit');
 }
 
 function displayAnswerMessage(isAnsCorrect) {
@@ -32,7 +33,7 @@ function displayAnswerMessage(isAnsCorrect) {
   $('.question-text').text(ANSWER_RESPONSE[isAnsCorrect ? 0 : 1]);
 
   $('.question-choices').empty();
-  $('.mainButton').text('Next Question');
+  $('.mainButton').text( currentQuestionNumber == totalNumberOfQuestions ? 'See Results' : 'Next Question');
 
 }
 
@@ -47,6 +48,61 @@ function displayRestart() {
     $('.startButton').text("Restart Quiz");
 }
 
+
+$('.startButton').on('click', function (event) {
+
+  $('.startQuiz-box').hide();
+  $('.quiz-section').show();
+  $('.answerResult').hide();
+
+  score = 0;
+  currentQuestionNumber = 0;
+  $('.score').text(score);
+  $('.questionNumber').text(currentQuestionNumber+1);
+
+  displayQuestion();
+});
+
+$('.mainButton').on('click', function (event) {
+  event.preventDefault();
+
+  if(!bOnQuestion)
+  {
+    if( (currentQuestionNumber) == totalNumberOfQuestions )
+    {
+      displayRestart();
+    }
+    else
+    {
+      displayQuestion();
+    }
+    
+    return;
+  }
+  
+  let selectedAnswerIndex = $("input[class='option']:checked").val();
+  
+  if( selectedAnswerIndex == undefined )
+  {
+    return;
+  }
+  
+  let correctAnswer = STORE[currentQuestionNumber].correctAnswer;
+  
+  let isCorrectAnswer = STORE[currentQuestionNumber].answers[selectedAnswerIndex] == correctAnswer;
+
+  if (isCorrectAnswer) {
+    score++;
+    $('.score').text(score);
+  }
+  
+  //increment the current question number
+  currentQuestionNumber++;
+    
+  //display the following question
+  displayAnswerMessage(isCorrectAnswer);
+});
+
 $(document).ready(function () {
   //Hide all questions and results
   $('.quiz-section').hide();
@@ -55,70 +111,3 @@ $(document).ready(function () {
   $('.answerResult').hide();
 
 });
-
-function startQuiz() {
-  $('.startButton').on('click', function (event) {
-
-    $('.startQuiz-box').hide();
-    $('.quiz-section').show();
-    $('.answerResult').hide();
-
-    score = 0;
-    currentQuestionNumber = 0;
-    $('.score').text(score);
-    $('.questionNumber').text(currentQuestionNumber+1);
-
-    displayQuestion();
-  }
-  );
-}
-
-function mainButtonPressed() {
-  $('.mainButton').on('click', function (event) {
-    event.preventDefault();
-
-    if(!bOnQuestion)
-    {
-      displayQuestion();
-    }
-    
-    let selectedAnswerIndex = $("input[class='option']:checked").val();
-    
-    if( selectedAnswerIndex == undefined )
-    {
-      return;
-    }
-   
-    let correctAnswer = STORE[currentQuestionNumber].correctAnswer;
-    
-    let isCorrectAnswer = STORE[currentQuestionNumber].answers[selectedAnswerIndex] == correctAnswer;
-
-    if (isCorrectAnswer) {
-      score++;
-      $('.score').text(score);
-    }
-    
-    if ((currentQuestionNumber + 1) == totalNumberOfQuestions) {
-
-      displayRestart();
-
-    }
-    else {
-  
-      //increment the current question number
-      currentQuestionNumber++;
-      
-      //display the following question
-      displayAnswerMessage(isCorrectAnswer);
-    }
-  });
-}
-
-
-
-
-$(startQuiz);
-$(mainButtonPressed);
-
-
-

@@ -29,6 +29,7 @@ img {
 
 .earth {
   width: 40%;
+  max-width: 100px;
 }
 ul{
   list-style-type:none;
